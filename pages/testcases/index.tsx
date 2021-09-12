@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, FormCheck, Row, Table } from "react-bootstrap";
 import NavBar from "../../components/NavBar";
 import { useRouter } from 'next/router';
 import { doc, getDoc, getDocs } from "@firebase/firestore";
@@ -7,9 +7,11 @@ import { db } from "../../utils/firebaseClient";
 import { TestCase } from "../../utils/interfaces/testcase";
 import { collection } from "firebase/firestore";
 import { TestCaseCard } from "../../components/TestCaseCard";
+import { EditButton } from "../../components/EditButton";
 
-export default function CreateTestCase() {
+export default function AllTestCases() {
     const [testCases, setTestCases] = useState<TestCase[]>([]);
+    const [selectedTestcases, setSelectedTestcases] = useState<string[]>([]);
 
     useEffect(() => {
         getDocs((collection(db, 'testcases'))).then(querySnap => {
@@ -19,6 +21,7 @@ export default function CreateTestCase() {
     return (
         <>
             <NavBar />
+            {/* <Button variant="primary" onClick={() => {alert(selectedTestcases)}}>assa</Button> */}
             <Container style={{ padding: '10px', width: '70%' }}>
                 {/* {testCases.map(testCase => <TestCaseCard testcase={testCase} />)}
                  */}
@@ -31,10 +34,13 @@ export default function CreateTestCase() {
                         </tr>
                     </thead>
                     <tbody>
-                        {testCases.map(testCase => (<tr>
-                            <td>x</td>
+                        {testCases.map(testCase => (<tr key={testCase.id}>
+                            <td><FormCheck type='checkbox' value={testCase.id} onChange={(event) => {
+                                if (event.target.checked) setSelectedTestcases([...selectedTestcases, testCase.id])
+                                else setSelectedTestcases(selectedTestcases.filter(id => testCase.id != id));
+                            }}></FormCheck></td>
                             <td><a href={`/testcases/${testCase.id}`}>{testCase.title}</a></td>
-                            <td><Button variant="secondary">Edit</Button></td>
+                            <td><EditButton id={testCase.id} /></td>
                         </tr>
                         ))}
                     </tbody>

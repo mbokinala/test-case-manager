@@ -4,11 +4,11 @@ import NavBar from "../../components/NavBar";
 import { useRouter } from 'next/router';
 import { doc, getDoc } from "@firebase/firestore";
 import { db } from "../../utils/firebaseClient";
+import { TestCase } from "../../utils/interfaces/testcase";
+import { EditButton } from "../../components/EditButton";
 
-export default function CreateTestCase() {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [section, setSection] = useState('');
+export default function TestCaseDetails() {
+    const [testcase, setTestcase] = useState<TestCase>();
     const router = useRouter();
     const { id } = router.query;
 
@@ -20,9 +20,7 @@ export default function CreateTestCase() {
                 if (docSnap.exists()) {
                     const { title, description, section } = docSnap.data();
 
-                    setTitle(title);
-                    setDescription(description);
-                    setSection(section);
+                    setTestcase({ id: docSnap.id, title, description, section });
                 }
             });
         }
@@ -32,13 +30,17 @@ export default function CreateTestCase() {
         <>
             <NavBar />
             <Container style={{ padding: '10px' }}>
-                <Row>
-                    <Col><h1>{title}</h1></Col>
-                    <Col><div className="float-end"><Button variant="secondary">Edit</Button> <Button variant="primary" onClick={() => router.push('/create/testcase')}>New Test Case</Button></div></Col>
-                </Row>
-                <p>{description}</p>
-                <br /><br />
-                {section ? <span><strong>Section: </strong><a href={`/sections/${section}`}>{section}</a></span> : <></>}
+                {testcase ?
+                    <>
+                        <Row>
+                            <Col><h1>{testcase.title}</h1></Col>
+                            <Col><div className="float-end"><EditButton id={testcase.id} /> <Button variant="primary" onClick={() => router.push('/create/testcase')}>New Test Case</Button></div></Col>
+                        </Row>
+                        <p>{testcase.description}</p>
+                        <br /><br />
+                        <span><strong>Section: </strong><a href={`/sections/${testcase.section}`}>{testcase.section}</a></span>
+                    </> : <></>
+                }
             </Container>
         </>
     )
