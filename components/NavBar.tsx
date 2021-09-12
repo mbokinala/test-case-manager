@@ -12,7 +12,7 @@ export default function NavBar() {
                         <Nav.Link href="/testcases">Test Cases</Nav.Link>
                         <NavDropdown title="Create" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/create/testcase">Create Testcase</NavDropdown.Item>
-                            <NavDropdown.Item href="/create/section">Create Section</NavDropdown.Item>
+                            <NavDropdown.Item href="/create/run">Create Run</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
