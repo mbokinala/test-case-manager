@@ -6,6 +6,7 @@ import { doc, getDoc } from "@firebase/firestore";
 import { db } from "../../utils/firebaseClient";
 import { TestCase } from "../../utils/interfaces/testcase";
 import { EditButton } from "../../components/EditButton";
+import Link from "next/link";
 
 export default function TestCaseDetails() {
     const [testcase, setTestcase] = useState<TestCase>();
@@ -34,11 +35,11 @@ export default function TestCaseDetails() {
                     <>
                         <Row>
                             <Col><h1>{testcase.title}</h1></Col>
-                            <Col><div className="float-end"><EditButton id={testcase.id} /> <Button variant="primary" onClick={() => router.push('/create/testcase')}>New Test Case</Button></div></Col>
+                            <Col><div className="float-end"><EditButton id={testcase.id} /> <Link href='/create/testcase'><Button variant="primary">New Test Case</Button></Link></div></Col>
                         </Row>
                         <p>{testcase.description}</p>
                         <br /><br />
-                        <span><strong>Section: </strong><a href={`/sections/${testcase.section}`}>{testcase.section}</a></span>
+                        <span><strong>Section: </strong><Link href={`/section/${testcase.section}`}><a>{testcase.section}</a></Link></span>
                     </> : <></>
                 }
             </Container>

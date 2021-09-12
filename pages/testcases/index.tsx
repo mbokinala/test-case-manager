@@ -8,6 +8,7 @@ import { TestCase } from "../../utils/interfaces/testcase";
 import { collection } from "firebase/firestore";
 import { TestCaseCard } from "../../components/TestCaseCard";
 import { EditButton } from "../../components/EditButton";
+import Link from "next/link";
 
 export default function AllTestCases() {
     const [testCases, setTestCases] = useState<TestCase[]>([]);
@@ -39,7 +40,7 @@ export default function AllTestCases() {
                                 if (event.target.checked) setSelectedTestcases([...selectedTestcases, testCase.id])
                                 else setSelectedTestcases(selectedTestcases.filter(id => testCase.id != id));
                             }}></FormCheck></td>
-                            <td><a href={`/testcases/${testCase.id}`}>{testCase.title}</a></td>
+                            <td><Link href={`/testcases/${testCase.id}`}><a>{testCase.title}</a></Link></td>
                             <td><EditButton id={testCase.id} /></td>
                         </tr>
                         ))}

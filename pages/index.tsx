@@ -1,4 +1,5 @@
 import { NextPage } from "next"
+import Link from 'next/link'
 import React from "react"
 import NavBar from "../components/NavBar"
 
@@ -6,8 +7,13 @@ const Home: NextPage = () => {
   return (
     <>
       <NavBar />
-      <a href="/create/testcase">Create a testcase</a>
-      <a href="/testcases">View all testcases</a>
+      <Link href="/create/testcase">
+        <a>Create a testcase</a>
+      </Link>
+      <br></br>
+      <Link href="/testcases">
+        <a>View all testcases</a>
+      </Link>
     </>
   )
 }
