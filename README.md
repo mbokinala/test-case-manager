@@ -13,3 +13,9 @@ NEXT_PUBLIC_FIREBASE_APP_ID=###
 ```
 
 Replace the `###`s with the values from your firebase config object (create a web app, not a service account for the admin sdk)
+
+Then run the following commands:
+```
+yarn 
+yarn dev
+```
