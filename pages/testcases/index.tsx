@@ -24,6 +24,7 @@ export default function AllTestCases() {
             <NavBar />
             {/* <Button variant="primary" onClick={() => {alert(selectedTestcases)}}>assa</Button> */}
             <Container style={{ padding: '10px', width: '70%' }}>
+                <h1>All Test Cases</h1>
                 {/* {testCases.map(testCase => <TestCaseCard testcase={testCase} />)}
                  */}
                 <Table striped bordered>
