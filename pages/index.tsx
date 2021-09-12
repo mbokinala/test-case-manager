@@ -8,11 +8,11 @@ const Home: NextPage = () => {
     <>
       <NavBar />
       <Link href="/create/testcase">
-        <a>Create a testcase</a>
+        <a style={{margin: '20px'}}>Create a testcase</a>
       </Link>
       <br></br>
       <Link href="/testcases">
-        <a>View all testcases</a>
+        <a style={{margin: '20px'}}>View all testcases</a>
       </Link>
     </>
   )

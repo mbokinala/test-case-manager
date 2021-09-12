@@ -35,7 +35,7 @@ export default function AllTestCases() {
                         </tr>
                     </thead>
                     <tbody>
-                        {testCases.map(testCase => (<tr key={testCase.id}>
+                        {testCases.sort((a, b) => a.title.localeCompare(b.title)).map(testCase => (<tr key={testCase.id}>
                             <td><FormCheck type='checkbox' value={testCase.id} onChange={(event) => {
                                 if (event.target.checked) setSelectedTestcases([...selectedTestcases, testCase.id])
                                 else setSelectedTestcases(selectedTestcases.filter(id => testCase.id != id));
