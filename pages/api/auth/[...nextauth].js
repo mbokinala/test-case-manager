@@ -15,7 +15,7 @@ export default NextAuth({
     async signIn(user, account, profile) {
       if (account.provider === 'google' &&
           profile.verified_email === true &&
-          profile.email.endsWith('@revoteen.com')) {
+          profile.email.endsWith(process.env.ALLOWED_LOGIN_DOMAIN)) {
         return true
       } else {
         return false
