@@ -1,6 +1,12 @@
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 
+import { signIn, signOut, useSession } from "next-auth/client"
+
 export default function NavBar() {
+    const [session, loading] = useSession()
+    console.log(session);
     return (
         <Navbar expand="lg" bg="light">
             <Container>
