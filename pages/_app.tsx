@@ -13,7 +13,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   if (session) {
-    console.log(session)
     return (
       <Provider session={pageProps.session}>
         <Component user={session.user} {...pageProps} />

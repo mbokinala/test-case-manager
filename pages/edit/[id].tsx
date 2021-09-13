@@ -17,30 +17,34 @@ export default function EditTestCase() {
     const [description, setDescription] = useState('');
     const [submitEnabled, setSubmitEnabled] = useState(true);
 
-    const [allSections, setAllSections] = useState(['']);
+    const [allSections, setAllSections] = useState<string[]>([]);
 
-    useEffect(() => {
-        getDocs(collection(db, 'sections')).then(snapshot => {
-            setAllSections(snapshot.docs.map(doc => doc.data().name));
-        });
-    }, []);
+    const [loading, setLoading] = useState(true);
+
+    const [initialSection, setIntitalSection] = useState('');
+
 
     const router = useRouter();
     const { id } = router.query;
 
+    useEffect(() => {console.log('new section is', section)}, [section]);
+
     useEffect(() => {
         if (router.query.id) {
-            console.log(router.query)
-
             getDoc(doc(db, 'testcases', id as string)).then(docSnap => {
                 if (docSnap.exists()) {
                     const { title, description, section } = docSnap.data();
 
                     setTitle(title);
                     setDescription(description);
-                    setSection(section);
+                    setIntitalSection(section);
                     setLoadingPrefill(false);
                 }
+
+                getDocs(collection(db, 'sections')).then(snapshot => {
+                    setAllSections(snapshot.docs.map(doc => doc.data().name));
+                    setLoading(false);
+                });
             });
         }
     }, [router.query]);
@@ -49,7 +53,7 @@ export default function EditTestCase() {
         event.preventDefault();
         setSubmitEnabled(false);
         if (newSection) {
-            await setDoc(doc(db, 'sections', section), {name: section});
+            await setDoc(doc(db, 'sections', section), { name: section });
         }
 
         await updateDoc(doc(db, 'testcases', id as string), {
@@ -71,7 +75,7 @@ export default function EditTestCase() {
         <>
             <NavBar />
             <Container style={{ padding: '10px' }}>
-                <Form onSubmit={handleSubmit}>
+                {!loading && <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="title">
                         <Form.Label>Test Case Title</Form.Label>
                         <Form.Control disabled={loadingPrefill} type="text" placeholder="Enter title" value={title} onChange={(event) => { setTitle(event.target.value); validate(event.target.value); }} />
@@ -91,14 +95,35 @@ export default function EditTestCase() {
                             newSelectionPrefix="Add a new section: "
                             options={allSections}
                             placeholder="Select a section"
-                            selected={[section]}
+                            defaultSelected={[initialSection]}
                             onChange={(selected: Array<{ label: string } | string>) => {
-                                if (typeof selected[0] === 'object') {
-                                    setSection(selected[0].label);
-                                    setNewSection(true);
-                                    return;
-                                };
-                                setSection(selected[0])
+                                console.log('onchange called', selected);
+                                if (selected.length > 0) {
+                                    if (typeof selected[0] === 'object') {
+                                        setSection(selected[0].label);
+
+                                        setNewSection(true);
+                                    } else {
+                                        setSection(selected[0]);
+                                        setNewSection(false);
+                                        console.log('called setsection')
+                                    }
+                                } else {
+                                    setNewSection(false);
+                                    setSection('');
+                                }
+                                // if (selected[0]) {
+                                //     if (typeof selected[0] === 'object') {
+                                //         setSection(selected[0].label);
+                                //         setNewSection(true);
+                                //     } else {
+                                //         console.log(selected[0])
+                                //         setSection(selected[0]);
+                                //         setNewSection(false);
+                                //     }
+                                // } else {
+                                //     setSection('');
+                                // }
                             }}
                         />
                     </Form.Group>
@@ -106,7 +131,7 @@ export default function EditTestCase() {
                     <Button variant="primary" type="submit" disabled={!submitEnabled}>
                         Add
                     </Button>
-                </Form>
+                </Form>}
             </Container>
         </>
     )

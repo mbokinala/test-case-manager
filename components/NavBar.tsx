@@ -6,7 +6,6 @@ import { signIn, signOut, useSession } from "next-auth/client"
 
 export default function NavBar() {
     const [session, loading] = useSession()
-    console.log(session);
     return (
         <Navbar expand="lg" bg="light">
             <Container>

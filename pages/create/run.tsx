@@ -1,6 +1,5 @@
 import { Button, Container, Form } from "react-bootstrap";
 import NavBar from "../../components/NavBar";
-import { Typeahead } from 'react-bootstrap-typeahead';
 import React, { useEffect, useState } from "react";
 import { collection, doc, addDoc, setDoc, getDocs } from "firebase/firestore";
 import { db } from "../../utils/firebaseClient";
