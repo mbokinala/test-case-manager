@@ -134,6 +134,7 @@ export default function TestCaseDetails() {
                     <>
                         <Row>
                             <Col><h1>Run {run.title}</h1></Col>
+                            <Col><div className="float-end"><p>Completion: {run.completedCases.length} / {uncompletedCases?.length || 0 + run.completedCases.length} ({Math.round((run.completedCases.length / (uncompletedCases?.length || 0 + run.completedCases.length) * 100))}%)</p></div></Col>
                         </Row>
                         <p>{run.description}</p>
                         <br /><br />
