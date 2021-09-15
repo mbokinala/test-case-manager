@@ -2,6 +2,8 @@
 
 This project is a work in progress
 
+A basic test tracker that allows you to create test cases, organize them into sections, and create runs (builds or versions to test). The app allows for realtime updates so multiple people can work on a run at the same time.
+
 To run it for yourself, clone the repository, then create a file called `.env.local` and fill it in with the following values:
 ```
 NEXT_PUBLIC_FIREBASE_API_KEY=###
@@ -19,3 +21,6 @@ Then run the following commands:
 yarn 
 yarn dev
 ```
+
+## Features coming soon:
+- comments on runs of a test case - useful for noting what exactly is wrong when a test is marked as fail
