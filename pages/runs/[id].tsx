@@ -9,6 +9,7 @@ import { Run } from "../../utils/interfaces/run";
 import { RunCase } from "../../utils/interfaces/runcase";
 import { getTestCase } from "../../utils/db";
 import { TestCase } from "../../utils/interfaces/testcase";
+import { DocumentData, DocumentSnapshot, onSnapshot } from "firebase/firestore";
 
 export default function TestCaseDetails() {
     const [run, setRun] = useState<Run>();
@@ -16,41 +17,47 @@ export default function TestCaseDetails() {
     const router = useRouter();
     const { id } = router.query;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (router.query.id) {
-                console.log(router.query)
 
-                let docSnap = await getDoc(doc(db, 'runs', id as string));
+    const processData = async (docSnap: DocumentSnapshot<DocumentData>) => {
+        if (docSnap.exists()) {
+            const { title, description, status } = docSnap.data();
 
-                if (docSnap.exists()) {
-                    const { title, description, status } = docSnap.data();
+            let completedCasesQuerySnapshot = await getDocs(collection(db, 'runs', id as string, 'completedCases'));
+            let completedCases: RunCase[];
 
-                    let completedCasesQuerySnapshot = await getDocs(collection(db, 'runs', id as string, 'completedCases'));
-                    let completedCases: RunCase[];
+            if (completedCasesQuerySnapshot.empty) completedCases = [];
+            else {
+                let requests: Promise<RunCase>[] = [];
+                requests = completedCasesQuerySnapshot.docs.map<Promise<RunCase>>(doc => (new Promise((resolve, reject) => {
+                    getTestCase(doc.data().testcaseId).then(testcase => resolve({ id: doc.id, testcase, status: doc.data().status }));
+                })));
 
-                    if (completedCasesQuerySnapshot.empty) completedCases = [];
-                    else {
-                        let requests: Promise<RunCase>[] = [];
-                        requests = completedCasesQuerySnapshot.docs.map<Promise<RunCase>>(doc => (new Promise((resolve, reject) => {
-                            getTestCase(doc.data().testcaseId).then(testcase => resolve({ id: doc.id, testcase, status: doc.data().status }));
-                        })));
-
-                        completedCases = await Promise.all(requests);
-                    }
-
-                    let allCasesQuerySnap = await getDocs((collection(db, 'testcases')));
-                    let allTestcases: TestCase[] = allCasesQuerySnap.docs.map<TestCase>(doc => ({ id: doc.id, title: doc.data().title, description: doc.data().description, section: doc.data().section }));
-
-                    // uncompleted cases are the cases which aren't part of completed cases
-                    setUncompletedCases(allTestcases.filter(testCase => (completedCases.findIndex(runcase => runcase.testcase.id == testCase.id) == -1)));
-
-                    setRun({ id: docSnap.id, title, description, status, completedCases, uncompletedCases: [] });
-                }
+                completedCases = await Promise.all(requests);
             }
+
+            let allCasesQuerySnap = await getDocs((collection(db, 'testcases')));
+            let allTestcases: TestCase[] = allCasesQuerySnap.docs.map<TestCase>(doc => ({ id: doc.id, title: doc.data().title, description: doc.data().description, section: doc.data().section }));
+
+            // uncompleted cases are the cases which aren't part of completed cases
+            setUncompletedCases(allTestcases.filter(testCase => (completedCases.findIndex(runcase => runcase.testcase.id == testCase.id) == -1)));
+
+            setRun({ id: docSnap.id, title, description, status, completedCases, uncompletedCases: [] });
         }
 
-        fetchData();
+    }
+
+    useEffect(() => {
+        if (router.query) {
+            onSnapshot(doc(db, 'runs', id as string), (doc) => {
+                processData(doc);
+            });
+
+            onSnapshot(collection(db, 'runs', id as string, 'completedCases'), (querySnap) => {
+                getDoc(doc(db, 'runs', id as string)).then(docSnap => {
+                    processData(docSnap);
+                })
+            });
+        }
     }, [router.query]);
 
 
@@ -86,7 +93,7 @@ export default function TestCaseDetails() {
     }
 
     const handleStatusChange = async (testcaseId: string, newStatus: string) => {
-        if(!newStatus) return;
+        if (!newStatus) return;
 
         let newRun = Object.assign({}, run);
 
